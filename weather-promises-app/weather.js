@@ -25,4 +25,4 @@ module.exports = {
 //             temp: body.currently.temperature
 //         })
 //     })
-// })
+// }) 
