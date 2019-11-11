@@ -7,21 +7,7 @@ const app = express();
 app.set('view engine', 'hbs');
 hbs.registerPartials(`${__dirname}/views/partials`);
 app.use((req, res, next) => {
-    const baseUrl = req.baseUrl;
-    const connection = req.connection;
-    const cookies = req.cookies;
-    const host = req.hostname;
-    const ip = req.ip;
-    const url = req.url;
-    let logArr = {
-        baseUrl,
-        cookies,
-        host,
-        ip,
-        url,
-    };
-    fs.appendFileSync('server.log', JSON.stringify(logArr, 4) + '\n')
-    next();
+        next();
 })
 // app.use((req, resp, next) => {
 //     resp.render('maintenance.hbs')
@@ -46,6 +32,9 @@ app.get('/json', (req, res) => {
 
 app.get('/', (req, res) => {
     // res.send('About page')
+    const logArr = getReqLog(req);
+    fs.appendFileSync(__dirname+'/server.log', JSON.stringify(logArr, 4) + '\n');
+    fs.writeFileSync(__dirname+'/server.json', JSON.stringify(logArr) + '\n');
     res.render('home.hbs', {
         title: 'Home Page',
         msg: 'Welcome to our new website',
@@ -70,3 +59,22 @@ app.get('/bad', (req, res) => {
 app.listen(3000, () => {
     console.log('server is up')
 });
+
+
+
+
+function getReqLog(req) {
+    const baseUrl = req.baseUrl;
+    const connection = req.connection;
+    const cookies = req.cookies;
+    const host = req.hostname;
+    const ip = req.ip;
+    const url = req.url;
+    return {
+        baseUrl,
+        cookies,
+        host,
+        ip,
+        url,
+    }
+}
